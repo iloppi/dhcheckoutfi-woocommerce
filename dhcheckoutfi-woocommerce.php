@@ -173,7 +173,7 @@ function tbz_wc_dhcheckoutfi_init() {
 
 			$order 					= wc_get_order( $order_id );
 
-			if($order->get_order_currency() != "EUR") {
+			if($order->get_currency() != "EUR") {
 				wc_add_notice( "Verkkomaksua ei voi käyttää, mikäli valuuttana ei ole Euro" , 'error' );
 				return;
 			}
@@ -189,7 +189,7 @@ function tbz_wc_dhcheckoutfi_init() {
 			// Order information
 			$coData						= array();
 			$coData["stamp"]			= time(); // unique timestamp
-			$coData["reference"]		= $order->id;
+			$coData["reference"]		= $order->get_id();
 			$coData["message"]			= $description;
 			$coData["return"]			= $return_url;
 			$coData["delayed"]			= $return_url;
@@ -348,7 +348,7 @@ function tbz_wc_dhcheckoutfi_init() {
 		 * Process Payment!
 		**/
 		function check_dhcheckoutfi_response( $posted ){
-			print_r($_GET);
+			//print_r($_GET);
 
 			$order_id 		= (int)$_GET['REFERENCE'];
             $order 			= wc_get_order($order_id);
@@ -366,13 +366,16 @@ function tbz_wc_dhcheckoutfi_init() {
 				{
 					if($co->isPaid($_GET['STATUS'])) 
 					{
-						echo "OK";
-						$order->update_status( 'processing', 'Maksu vahvistettu' );
+						//echo "OK";
+                        //$order->update_status( 'processing', 'Maksu vahvistettu' );
 
-	                    $order->add_order_note( 'Maksettu verkkomaksuna');
+                        $order->add_order_note( 'Maksettu verkkomaksuna');
 
+                        // Let Woocommerce handle status update and stock levels
+                        $order->payment_complete();
+                        
 						// Reduce stock levels
-						$order->reduce_order_stock();
+						//$order->reduce_order_stock();
 
 						// Empty cart
 						WC()->cart->empty_cart();
