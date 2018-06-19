@@ -3,7 +3,7 @@
 	Plugin Name: Checkout-verkkomaksutoiminto
 	Plugin URI: https://www.laskuhari.fi/checkout-fi-woocommerce-verkkomaksu
 	Description: Lisää Checkoutin verkkomaksutoiminnot WooCommercen kassasivulle
-	Version: 0.9.4
+	Version: 0.9.6
 	Author: Datahari Solutions
 	Author URI: https://www.datahari.fi
 	License:  GPL-2.0+
@@ -171,9 +171,12 @@ function tbz_wc_dhcheckoutfi_init() {
 	    **/
 	    function generate_dhcheckoutfi_form( $order_id ) {
 
+	    	// enqueue the payment button styles
+	    	wp_enqueue_style( "dhcheckout-style", plugins_url( 'assets/dhcheckout-style.css' , __FILE__ ) );
+
 			$order 					= wc_get_order( $order_id );
 
-			if($order->get_currency() != "EUR") {
+			if($order->get_order_currency() != "EUR") {
 				wc_add_notice( "Verkkomaksua ei voi käyttää, mikäli valuuttana ei ole Euro" , 'error' );
 				return;
 			}
@@ -216,79 +219,7 @@ function tbz_wc_dhcheckoutfi_init() {
 				$link = $xml->paymentURL;
 			}
 
-			$return = '<style type="text/css">
-.C1 {
-	width: calc(25% - 16px);
-	height: 120px;
-	border: 1pt solid #a0a0a0;
-	display: block;
-	float: left;
-	margin: 7px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	clear: none;
-	padding: 5px 0 5px 0;
-	text-align: center;
-}
-
-@media (max-width: 920px) {
-	.C1 {
-		width: calc(33.33% - 16px);
-	}
-}
-
-@media (max-width: 580px) {
-	.C1 {
-		width: calc(50% - 16px);
-	}
-}
-
-@media (max-width: 380px) {
-	.C1 {
-		width: calc(100% - 16px);
-	}
-}
-
-.C1:hover {
-	background-color: #f0f0f0;
-	border-color: black;
-}
-
-.C1 form {
-	width: 100%;
-	height: 120px;
-}
-
-.C1 form span {
-	display: block;
-	height: 92px;
-	width: 100%;
-}
-
-.C1 form span input {
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
-	border: 1pt solid #f2f2f2;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	padding: 5px;
-	background-color: white;
-}
-
-.C1:hover form span input {
-	border: 1pt solid black;
-	max-width: 100%;
-}
-
-.C1 div {
-	text-align: center;
-	font-family: arial;
-	font-size: 8pt;
-}
-</style><p>'.$this->instructions.'</p>';
+			$return = '<p>'.$this->instructions.'</p>';
 
 	foreach($xml->payments->payment->banks as $bankX) {
 		foreach($bankX as $bank) {
@@ -414,8 +345,10 @@ function tbz_wc_dhcheckoutfi_init() {
 	            $order->add_order_note( 'Asiakas sai virheen: MAC-parametri puuttuu' );
 				wc_add_notice( 'Virhe: MAC-parametri puuttuu', 'error' );
 			}
-			$redirect_url = esc_url_raw( $this->get_return_url( $order ) );
+
+			$redirect_url = $order->get_checkout_order_received_url();
 		    wp_redirect( $redirect_url );
+
 		    exit;
         }
 	}

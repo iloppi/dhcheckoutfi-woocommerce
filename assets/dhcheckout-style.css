@@ -1,0 +1,76 @@
+.C1 {
+	width: calc(25% - 16px);
+	height: 120px;
+	border: 1pt solid #a0a0a0;
+	display: block;
+	float: left;
+	margin: 7px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	clear: none;
+	padding: 5px 0 5px 0;
+	text-align: center;
+}
+
+@media (max-width: 920px) {
+	.C1 {
+		width: calc(33.33% - 16px);
+	}
+}
+
+@media (max-width: 580px) {
+	.C1 {
+		width: calc(50% - 16px);
+	}
+}
+
+@media (max-width: 350px) {
+	.C1 {
+		width: calc(100% - 16px);
+	}
+}
+
+.C1:hover {
+	background-color: #f0f0f0;
+	border-color: black;
+}
+
+.C1 form {
+	width: 100%;
+	height: 120px;
+}
+
+.C1 form span {
+	display: block;
+	height: 92px;
+	width: 100%;
+}
+
+.C1 form span input {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	border: 1pt solid #f2f2f2;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 5px;
+	background-color: white;
+	max-width: 100%;
+}
+
+.C1:hover form span input {
+	border: 1pt solid black;
+	max-width: 100%;
+}
+
+.C1 div {
+	text-align: center;
+	font-family: arial;
+	font-size: 13px;
+}
+
+.C1 p {
+	margin:  0;
+}
